@@ -134,7 +134,7 @@ public abstract class GameTemplate extends Application {
         fpsText = new BitmapText(guiFont, false);
         fpsText.setLocalTranslation(0, fpsText.getLineHeight(), 0);
         fpsText.setText("Frames per second");
-        guiNode.attachChild(fpsText);
+        //guiNode.attachChild(fpsText);
     }
 
     /**
@@ -146,7 +146,7 @@ public abstract class GameTemplate extends Application {
         statsView = new StatsView("Statistics View", assetManager, renderer.getStatistics());
 //         move it up so it appears above fps text
         statsView.setLocalTranslation(0, fpsText.getLineHeight(), 0);
-        guiNode.attachChild(statsView);
+        //guiNode.attachChild(statsView);
     }
 
     @Override

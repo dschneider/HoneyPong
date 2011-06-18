@@ -7,6 +7,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.Node;
+import com.jme3.bounding.BoundingVolume;
 
 /**
  *
@@ -14,39 +15,43 @@ import com.jme3.scene.Node;
  */
 public class Player {
     
-    private Geometry geometry;
+    private Geometry player;
     
     public Player(Node rootNode, AssetManager assetManager, String position) {
-        Box playerBox = new Box(Vector3f.ZERO, 0.3f, 1.5f, 1);
+        Box playerBox = new Box(Vector3f.ZERO, 0.3f, 1.5f, 0.5f);
         
-        geometry = new Geometry("Box", playerBox);
-        geometry.updateModelBound();
+        player = new Geometry("Box", playerBox);
+        player.updateModelBound();
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/SolidColor.j3md");
         mat.setColor("m_Color", ColorRGBA.Blue);
-        geometry.setMaterial(mat);
+        player.setMaterial(mat);
 
         if (position == "left") 
         {
-            geometry.setLocalTranslation(-4.5f, 0, 0);
+            player.setLocalTranslation(-20.5f, 0, 0);
         }
         else
         {
-            geometry.setLocalTranslation(4.5f, 0, 0);
+            player.setLocalTranslation(20.5f, 0, 0);
         }
         
-        rootNode.attachChild(geometry);
+        rootNode.attachChild(player);
     }
     
     public void changePosition(float x, float y, float z) {
-        geometry.setLocalTranslation(x, y, z);
+        player.setLocalTranslation(x, y, z);
     }    
     
     public Geometry getGeometry() {
-        return geometry;
+        return player;
     }
     
     public Vector3f getCurrentPosition() {
-        return geometry.getLocalTranslation();
+        return player.getLocalTranslation();
     }
+    
+    public boolean collidesWith(BoundingVolume bv) {
+        return player.getWorldBound().intersects(bv);
+    }    
 }
