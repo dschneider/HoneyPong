@@ -11,29 +11,33 @@ import pong.entities.Player;
 import pong.entities.Ball;
 import pong.entities.World;
 import pong.ui.PlayerInformation;
+import pong.effects.Shockwave;
 
 /**
  * @author dennisschneider
  */
 public class Pong extends GameTemplate {
 
-    Ball ball;
+    private Ball ball;
     
-    Player player1;
-    Player player2;
+    private Player player1;
+    private Player player2;
     
-    PlayerInformation player1Information;
-    PlayerInformation player2Information;
+    private PlayerInformation player1Information;
+    private PlayerInformation player2Information;
     
-    World world;
+    private World world;
+    
+    private Shockwave shockwave;
     
     private AudioNode gameMusic;
+    private AudioNode bumpSound;
     
-    Float ballPosition = 0.0f;
-    Float player1PositionUp = 0.0f;
-    Float player2PositionUp = 0.0f;
+    private Float ballPosition = 0.0f;
+    private Float player1PositionUp = 0.0f;
+    private Float player2PositionUp = 0.0f;
     
-    Float timer;
+    private Float timer;
     
     public static void main(String[] args) {
         Pong app = new Pong();
@@ -42,19 +46,33 @@ public class Pong extends GameTemplate {
 
     public AnalogListener analogListener = new AnalogListener() {
         public void onAnalog(String name, float value, float tpf) {
-            if (name.equals("MoveUp_Player1")) {
-                player1PositionUp = player1PositionUp + 0.3f;
+            if (name.equals("MoveUp_Player1")) 
+            {
+                if (!(player1.collidesWith(world.getTopWall().getWorldBound())))
+                {
+                    player1PositionUp = player1PositionUp + 0.3f;
+                }
             }
             else if (name.equals("MoveDown_Player1"))
             {
-                player1PositionUp = player1PositionUp - 0.3f;
+                if (!(player1.collidesWith(world.getBottomWall().getWorldBound())))
+                {
+                    player1PositionUp = player1PositionUp - 0.3f;
+                }
             }
-            else if (name.equals("MoveUp_Player2")) {
-                player2PositionUp = player2PositionUp + 0.3f;
+            else if (name.equals("MoveUp_Player2")) 
+            {
+                if (!(player2.collidesWith(world.getTopWall().getWorldBound())))
+                {
+                    player2PositionUp = player2PositionUp + 0.3f;
+                }
             }
             else if (name.equals("MoveDown_Player2"))
             {
-                player2PositionUp = player2PositionUp - 0.3f;
+                if (!(player2.collidesWith(world.getBottomWall().getWorldBound())))
+                {
+                    player2PositionUp = player2PositionUp - 0.3f;
+                }
             }
         }
     };    
@@ -75,8 +93,10 @@ public class Pong extends GameTemplate {
         
         world = new World(rootNode, assetManager);
         
-        initAudio();
+        shockwave = new Shockwave(rootNode, assetManager);
+        
         initInput();
+        initAudio();
     }
     
     private void initInput() {
@@ -94,12 +114,17 @@ public class Pong extends GameTemplate {
     }
     
     private void initAudio() {
-        gameMusic = new AudioNode(assetManager, "Sounds/Music/Music.ogg");
+        bumpSound = new AudioNode(assetManager, "Sounds/Effects/Bump.ogg", false);
+        bumpSound.setLooping(false);
+        bumpSound.setVolume(3);
+        
+        gameMusic = new AudioNode(assetManager, "Sounds/Music/Music.ogg", true);
         gameMusic.setLooping(true);
         gameMusic.setPositional(true);
-        //gameMusic.setLocalTranslation(Vector3f.ZERO.clone());
-        gameMusic.setVolume(3);
-        audioRenderer.playSource(gameMusic); // play continuously!
+        gameMusic.setLocalTranslation(Vector3f.ZERO.clone());
+        gameMusic.setVolume(2);
+        
+        //audioRenderer.playSource(gameMusic); // play continuously!*/
     }
     
     @Override
@@ -107,24 +132,21 @@ public class Pong extends GameTemplate {
         
         ball.move(ball.getVelocity().getX(), ball.getVelocity().getY(), ball.getVelocity().getZ());
         
-        if (!(player1.collidesWith(world.getTopWall().getWorldBound()) || player1.collidesWith(world.getBottomWall().getWorldBound())))
-        {
-            player1.changePosition(player1.getCurrentPosition().x, player1PositionUp, 0);
-        }
-        
-        if (!(player2.collidesWith(world.getTopWall().getWorldBound()) || player2.collidesWith(world.getBottomWall().getWorldBound())))
-        {
-            player2.changePosition(player2.getCurrentPosition().x, player2PositionUp, 0);
-        }
+        player1.changePosition(player1.getCurrentPosition().x, player1PositionUp, 0);
+        player2.changePosition(player2.getCurrentPosition().x, player2PositionUp, 0);
         
         if ((ball.collidesWith(world.getTopWall().getWorldBound())) || (ball.collidesWith(world.getBottomWall().getWorldBound())))
         {
+            shockwave.explode(ball.getLocalTranslation().x, ball.getLocalTranslation().y, ball.getLocalTranslation().z);
             ball.getVelocity().y *= -1f;
+            audioRenderer.playSourceInstance(bumpSound);
         }
         
         if ((ball.collidesWith(player1.getGeometry().getWorldBound())) || (ball.collidesWith(player2.getGeometry().getWorldBound())))
         {
-            ball.getVelocity().x *= -1.5f;
+            shockwave.explode(ball.getLocalTranslation().x, ball.getLocalTranslation().y, ball.getLocalTranslation().z);
+            ball.getVelocity().x *= -1.3f;
+            audioRenderer.playSourceInstance(bumpSound);
         }
         
         if (ball.collidesWith(world.getLeftWall().getWorldBound()))
@@ -139,11 +161,13 @@ public class Pong extends GameTemplate {
             ball.setPosition(new Vector3f(0f, 0f, 0f));
             ball.resetVelocity();
             player1Information.incrementScore();
-        }        
+        }     
+        
+        audioRenderer.update(1f);
     }
 
     @Override
     public void simpleRender(RenderManager rm) {
-        //TODO: add render code
+        
     }
 }

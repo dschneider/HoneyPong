@@ -55,12 +55,12 @@ public class World {
         
         rootNode.attachChild(bottomWall);
         
-        Box rightWallBox = new Box(new Vector3f(), 1f, 100f, 1f);
+        Box rightWallBox = new Box(new Vector3f(), 2f, 100f, 1f);
         
         rightWall = new Geometry("Ball", rightWallBox);
         rightWall.setModelBound(new BoundingBox());
         rightWall.updateModelBound();        
-        rightWall.getLocalTranslation().set(23f, 0, 0);
+        rightWall.getLocalTranslation().set(25f, 0, 0);
         
         Material rightWallMat = new Material(assetManager, "Common/MatDefs/Misc/SolidColor.j3md");
         rightWallMat.setColor("m_Color", ColorRGBA.Blue);
@@ -68,12 +68,12 @@ public class World {
         
         rootNode.attachChild(rightWall);
         
-        Box leftWallBox = new Box(new Vector3f(), 1f, 100f, 1f);
+        Box leftWallBox = new Box(new Vector3f(), 2f, 100f, 1f);
         
         leftWall = new Geometry("Ball", leftWallBox);
         leftWall.setModelBound(new BoundingBox());
         leftWall.updateModelBound();        
-        leftWall.getLocalTranslation().set(-23f, 0, 0);
+        leftWall.getLocalTranslation().set(-25f, 0, 0);
         
         Material leftWallMat = new Material(assetManager, "Common/MatDefs/Misc/SolidColor.j3md");
         leftWallMat.setColor("m_Color", ColorRGBA.Blue);

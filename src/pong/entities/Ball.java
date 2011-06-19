@@ -10,6 +10,8 @@ import com.jme3.bounding.BoundingSphere;
 import com.jme3.math.Vector3f;
 import com.jme3.bounding.BoundingVolume;
 
+import java.util.Random;
+
 /**
  *
  * @author dennisschneider
@@ -20,7 +22,7 @@ public class Ball {
     private Vector3f ballVelocity;
     
     public Ball(Node rootNode, AssetManager assetManager) {
-        Sphere ballSphere = new Sphere(63, 50, 0.2f);
+        Sphere ballSphere = new Sphere(63, 50, 0.4f);
         
         ball = new Geometry("Ball", ballSphere);
         ball.setModelBound(new BoundingSphere());
@@ -58,6 +60,19 @@ public class Ball {
     }
     
     public void resetVelocity() {
-        setVelocity(new Vector3f(-0.1f, 0.1f, 0));
+        Random r = new Random();
+        float x = r.nextFloat();
+        float y = r.nextFloat();
+        float k = r.nextFloat();
+ 
+        if (k > 0.5)
+        {
+            x *= -1;
+            y *= -1;
+        }
+        
+        x = 0.1f;
+
+        setVelocity(new Vector3f(x, y, 0));
     }
 }
